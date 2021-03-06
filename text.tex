@@ -920,3 +920,263 @@ Thus, $X$ and $Y$ cannot be `separated' by decidable sets.
   Since $Z$ contains all the $x$s such that $f(x)$ is nonzero, $F$ continues $f$.
   But it is computable, in contradiction with the conclusion.
 \end{proof}
+
+\subsection{Properties of enumerable sets}
+
+\begin{lemma}
+  There exists an enumerable set with non-enumerable complement.
+\end{lemma}
+
+\begin{proof}
+  Consider the set of numbers of TM that accept themselves (we use a surjective enumeration).
+  Using Levin's optimal algorithm, it is easy to enumerate it; but its complement is the set of all machines that do not accept themselves (it is not enumerable).
+\end{proof}
+
+\begin{definition}
+  Let $U \ss \N^{n+1}$. Define its \emph{sections} as
+  $$ U_k = \b{ x \mid (k, x) \in S} \ss \N^{n}. $$
+  We say that $U$ is \emph{universal} for the set
+  $$ C = \b{U_k \mid k \in \N}. $$
+\end{definition}
+
+\begin{lemma}
+  Let $C$ be the set of all enumerable sets of $\N^k$.
+  Then exists a set $U$ which is universal for $C$.
+\end{lemma}
+
+\begin{proof}
+  For each $e \in C$, there exists a TM $m \in \N$ that enumerates it.
+  Define
+  $$ U = \b{(m, x) \mid \text{$x \in \N^n$ occurs in the output of $m \in \N$}}. $$
+\end{proof}
+
+\section{Principal universal functions}
+
+\begin{definition}
+  Let $U \col {\ss \N^{m+1}} \to \N$ be a universal function for $\Comp_m$.
+  $U$ is \emph{principal}, iff for every $f \in \Comp_{m+1}$ exists $t \in \Comp_1^*$ such that
+  $$ f(n, x) = U\p{t(n), x} = U_{t(n)}(x) $$
+  for all $n \in \N$, $x  \in \N^m$.
+\end{definition}
+
+\begin{theorem}
+  There exists such a $U$.  
+\end{theorem}
+
+\begin{proof}
+  Let $V \col \N^{m+1} \to \N$ be a universal function for $\Comp_{m+1}$.
+  $f$ is realised as $V_k$ for some $k \in \N$:
+  $$ f(n, x) = V(k, n, x). $$
+  Let $c \col \N^2 \to \N$ be a Cantor enumeration, and $l, r \col \N \to \N$ its left and right inverses.
+  Then
+  $$ f(n, x) = V\p{l\p{c(k, n)}, n, x}. $$
+  Here, put
+  $$ U\p{c(k, n), x} := V\p{l\p{c(k, n)}, n, x} \iff U(y, x) = V\p{l(y), r(y), x}. $$
+  $U$ thus defined is (1) computable, since $V$ is; (2) universal for $\Comp_m$, since for every $g \in \Comp_m$ there is a computable function $(z, x) \mapsto g(x)$, which is realised as $V_{l(y)}$ for some $y$.
+  Hence $t(n) = c(k, n)$ fits.
+\end{proof}
+
+\begin{lemma}
+  $U \in \Comp_2$ is a principal universal function for $\Comp_1$
+  iff there exists $f \in \Comp_2^*$ such that
+  $$ U_p \circ U_q = U_{f(p, q)} $$
+  for all $p,q \in \N$.  
+\end{lemma}
+
+\begin{proof}[$\Rightarrow$]
+  Unwrap the notation:
+  $$ U\p{p, U(q, x)} =^? U\p{f(p, q), x}. $$
+  Consider
+  $$ g \col (n, x) \mapsto U\p{l(n), U\p{r(n), x}}. $$
+  Since $U$ is a principal universal function, there exists $t \in \Comp_1$ such that
+  $$ g(n, x) = U_{t(n)}(x). $$
+  Therefore,
+  \begin{align*}
+    U\p{p, U(q, x)}
+    &= g\p{c(p, q), x} \\
+    &= U_{t\p{c(p, q)}}(x). \\
+  \end{align*}
+\end{proof}
+
+\begin{proof}[$\Leftarrow$]
+  
+  \wtf
+  
+\end{proof}
+
+\begin{theorem}[Uspensky, Rice]
+  Let $\naught \subset A \subset \Comp_1$.
+  Let $U$ be a principal universal function for $\Comp_1$.
+  Then the set
+  $$ T = \b{n \mid U_n \in A} $$
+  is undecidable.
+\end{theorem}
+
+\begin{proof}
+  Suppose otherwise.
+  Let $X, Y \ss \N$ be disjoint enumerable sets.
+  Let $a \in A$ and $b \not\in A$.
+  Consider
+  $$
+  f(w, z) = \begin{cases}
+    a(z), & w \in X, \\
+    b(z), & w \in Y, \\
+    \und, & \oth.
+  \end{cases}
+  $$
+  $f$ is computable: run the enumerating algorithms for $X$ and $Y$ in parallel and compute $a(z)$ or $b(z)$, depending on whichever machine outputs $z$.
+  Since $T$ is decidable, we can check whether $f_w \in A$ and thus separate $X$ from $Y$:
+  \begin{itemize}
+    \item If $f_w = U_{t(w)} \in A$, then $f_w = a$, and so $w \in X$.
+    \item Otherwise $f_w = b$, and $w \in Y$.
+  \end{itemize}
+\end{proof}
+
+\begin{corollary}
+  Let $\phi \in \Comp_1$ and $U$ as in the theorem.
+  Then the set
+  $$ \b{n \mid U_n = \phi} $$
+  is undecidable.
+\end{corollary}
+
+\begin{proof}
+  The case $A = \b{\phi}$.
+\end{proof}
+
+\begin{corollary}
+  There exists a function $V$ which is universal for $\Comp_1$, but not principal.
+\end{corollary}
+
+\begin{proof}
+  Let $U$ be an arbitrary universal function for $\Comp_1$.
+  Let $D$ be the set of $U$-numbers of computable functions $\phi$ with $\dom \phi \ne \naught$.
+  $D$ is enumerable, so the range of a computable $f \col \N \to D$.
+  Consider
+  $$
+  V(i, x) =
+  \begin{cases}
+    U\p{f(i-1), x}, & i > 0, \\
+    \und, & \oth.
+  \end{cases}
+  $$
+  $V$ is a $\Comp_1$-universal function.
+  But the sole number of the function with empty domain is 0.
+  This contradicts the first corollary, since any finite set is decidable.
+\end{proof}
+
+\section{Fixed point theorem}
+
+\begin{lemma}
+  Let $\sim$ be an equivalence relation on $\N$.
+  The following conditions cannot hold simultaneously:
+  \begin{enumerate}
+    \item $\fa f \in \Comp_1\ \ex g \in \Comp_1^*\ \fa x \in \dom f \col x \in \dom g$ and $g(x) \sim f(x)$.
+    \item $\ex h \in \Comp_1^*\ \fa n \in \N \ n \not\sim h(n)$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  Suppose both conditions hold.
+  Let $f \in \Comp_1$ be such that, if $p \in \Comp_1$, then exists $x \in \N$, for which $f(x) = p(x)$.
+  For example, $f(x) := U(x, x)$.
+  
+  But consider $p := h \circ g$.
+  It differs from $f$ everywhere:
+  $$ h\p{g(x)} \not\sim g(x) \sim f(x) $$
+  for every $x \in \dom f$, and for every $x \not\sim \dom f$,
+  $$ h $$
+\end{proof}
+
+\begin{theorem}[on a fixed point]
+  Let $U$ be a principal universal function for $\Comp_1$, and let $h \in \Comp_1^*$.
+  Then exists $n \in \N$ such that
+  $$ U_n = U_{h(n)}. $$
+\end{theorem}
+
+\begin{proof}
+  Put
+  $$ m \sim n \iff U_m = U_n. $$
+  The theorem will follow from the previous lemma, if we show that the first condition holds.
+  
+  Let $f \in \Comp_1$.
+  Let
+  $$ V(n, x) := U\p{f(n), x}. $$
+  There exists $g \in \Comp_1^*$ such that
+  $$ V(n, x) = U\p{g(n), x}. $$
+  This $g$ fits: if $x \in \dim f$, then, trivially, $x \in \dom g$, and
+  $$ U_{g(x)}(y) = U\p{g(x), y} = V\p{x, y} = U\p{f\p{x},y} = U_{f(x)}(y). $$ 
+\end{proof}
+
+\begin{corollary}
+  Let $U \col \N^2 \to \N$ be a principal universal function. Then exists $p \in \N$ such that
+  $$U(p, x) = p$$
+  for every $x$ such that $(p, x) \in \dom U$.
+\end{corollary}
+
+\begin{proof}
+  Take $V(n, x) := n.$ There exists $s \in \Comp_1^*$ such that $U_{s(n)} = V_n = n$.
+  Now apply the theorem to $h = s$.
+\end{proof}
+
+\section{$m$-reducibility}
+
+\begin{definition}
+  Let $A, B \ss \N$.
+  We say that $A$ \emph{$m$-reduces} to $B$ and write $A \le_m B$, iff exist $f \in \Comp_1^*$ such that
+  $$ \fa x \in A \col x \in A \Leftrightarrow f(x) \in B. $$
+  That is,
+  $$ f(A) \ss B \quad\text{and}\quad f^{-1}(B) \ss A. $$
+  Though this is not standard notation, we will write
+  $$ A \le_f B. $$
+\end{definition}
+
+\begin{remark}
+  The $m$ stands for `many-to-one'.  
+\end{remark}
+
+\begin{lemma}
+  $\le_m$ is reflexive and transitive.
+\end{lemma}
+
+\begin{proof}
+  Take $\Id$ and $\circ$.t
+\end{proof}
+
+\begin{lemma}
+  Suppose $A \le_f B$.
+  \begin{enumerate}
+    \item If $B$ is decidable, then $A$ is.
+    \item If $B$ is enumerable, then $A$ is.
+    \item $\ol A \le_f \ol B$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  ~\begin{enumerate}
+    \item Because $\q{x \in A} = \q{f(x) \in B}.$ 
+    \item Run the enumerating machine for $B$ and, simultaneously, one for $\im f$. If, for some $x$, the number $f(x)$ has been output twice, we have $f(x) \in B$. Then $x \in A$. Conversely, if $x \in A$, such a moment is bound to occur.
+    \item Observe that
+    $$ x \in \ol A \iff f(x) \in \ol B. $$
+  \end{enumerate}
+\end{proof}
+
+\begin{example}
+  If $A \ss \N$ is decidable and $\naught \subset B \subset \N$, then $A \le B$. Indeed, let
+  $$ f \col x \mapsto b \q{x \in B} + c \q{x \not\in B} $$
+  for some $b \in B$ and $c \in \ol B$. 
+\end{example}
+
+\begin{example}
+  If $A \le \naught$, then $A = \naught$.
+  If $A \le \N$, then $A = \N$.
+\end{example}
+
+\section{$m$-completeness}
+
+\begin{definition}
+  An enumerable set $B$ is \emph{$m$-complete}, iff every enumerable $A$ $m$-reduces to $B$.
+\end{definition}
+
+\begin{theorem}
+  Such a $B$ exists.  
+\end{theorem}
