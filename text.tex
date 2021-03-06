@@ -395,10 +395,6 @@ An irrelevant note: ${x+y+1 \choose 2}$ is the number of cells before the diagon
   \end{align*}
 \end{proof}
 
-\begin{proof}
-
-\end{proof}
-
 \begin{theorem}
   Let $R_0, \dots, R_k$ be $n$-ary relations such that
   $$ R_0 \sqcup \dots \sqcup R_k = \N^n. $$
@@ -419,7 +415,15 @@ An irrelevant note: ${x+y+1 \choose 2}$ is the number of cells before the diagon
   $$ f(\ol x) = \sum_{i=0}^k f_i(\ol x) \q{R_k(\ol x)}. $$
 \end{proof}
 
-\section{Trivially computable functions}
+\section{Computable functions}
+
+\newcommand{\Comp}[0]{\on{R}}
+
+\begin{definition}
+  Let $D \ss \N^m$.
+  A function $f \col D \to \N^n$ is \emph{computable}, iff there exists a TM that, starting with any $x \in D$ written on its input tape, stops with only $f(x)$ written on the output tape.
+  We denote by $\Comp_m$ the set of all computable partial functions ${\ss\N^m} \to \N$, and by $\Comp_m^* \ss \Comp_m$ the set of computable functions $\N^m \to \N$.
+\end{definition}
 
 \begin{definition}
   A set $X \ss \N^k$ is \emph{decidable}, iff its characteristic function is computable.
@@ -463,7 +467,7 @@ An irrelevant note: ${x+y+1 \choose 2}$ is the number of cells before the diagon
 \section{Equivalence of Kleene and Turing computability}
 
 \begin{theorem}
-  $f$ is computable iff it is partial recursive.  
+  $f$ is computable iff it is partial recursive.
 \end{theorem}
 
 \begin{proof}[Proof of $\sps$]
@@ -676,4 +680,243 @@ We assert that the function $\gb$ grows faster than any primitive recursive func
 \begin{proof}
   Indeed,
   $$ f(x, y) = \min\b{ q \mid qy = x }. $$
+\end{proof}
+
+\section{Enumerability}
+
+\begin{definition}
+  A set $S \ss \N$ is \emph{enumerable}, iff there exists a TM that outputs all the elements of $S$ and only them, separated by commas.
+\end{definition}
+
+\begin{example}
+  $\naught$ and $\N$ are enumerable.
+  In general, all decidable sets are enumerable.
+\end{example}
+
+It is not long before until we give an example of an enumerable, non-decidable set.
+
+\begin{definition}
+  Let $S \ss \N$.
+  Its \emph{semicharacteristic} function is the partial function
+  $$ \daleth_S(x) := \begin{cases}
+    1, & x \in S \\
+    \und, & \oth.
+  \end{cases}
+  $$
+\end{definition}
+
+\begin{lemma}
+  Let $S \ss \N$ be nonempty.
+  The following are equivalent:
+  \begin{enumerate}
+    \item $S$ is enumerable.
+    \item Its semicharacteristic function is computable.
+    \item There exists a computable $f \col S \to \N$.
+    \item There exists an initial segment $R \ss \N$ and a computable bijective $g \col R \to S$.
+    \item There exists a computable surjective $h \col \N \to S$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}[$1 \Rightarrow 2$]
+  Run the TM until it outputs the element.
+  We are comfortable with the prospect of it never doing that.
+\end{proof}
+
+\begin{proof}[$2 \Rightarrow 3$]
+  Obvious.
+\end{proof}
+
+\begin{proof}[$3 \Rightarrow 4$]
+  Via minimisation: let $g(0)$ be the smallest member of $S$, and let $g(x)$ for $x > 0$ be the smallest member of $S$ that is greater than $g(x-1)$. This function is not defined everywhere in case of a finite $S$.
+\end{proof}
+
+\begin{proof}[$4 \Rightarrow 5$]
+  To deal with the case of a finite $S$, we put $h(x) := g(x)$ where $g$ is defined, and $h(x) = \max S$, if $x \ge \a{R}$.
+\end{proof}
+
+\begin{proof}[$5 \Rightarrow 1$]
+  Build a TM that outputs $f(0), f(1), \dots$ 
+\end{proof}
+
+\begin{lemma}[Post's criterion]
+  \label{Post's criterion}
+    Let $S \ss \N$.
+    $S$ is decidable iff both $S$ and $\ol S$ are enumerable.
+\end{lemma}
+
+\begin{proof}[$\Rightarrow$]
+  Iterate over naturals and check inclusion for each.
+  Output accordingly.
+\end{proof}
+
+\begin{proof}[$\Leftarrow$]
+  To compute the characteristic function on $x \in \N$, we run machines for $S$ and $\ol S$ in parallel.
+  The first to output $x$ corresponds to the correct answer.
+\end{proof}
+
+\subsection{Projections}
+
+\begin{definition}
+  Let $S \ss \N^n$. We call the set
+  $$ \Proj_i S = \b{ x_i \mid \ex x_-, x_+ \col (x_-, x_i, x_+) \in S } $$
+  a \emph{projection} of $S$ onto the coordinate $i$.
+\end{definition}
+
+\begin{lemma}[on projections]
+  Let $P \ss \N$.
+  The following are equivalent:
+  \begin{enumerate}
+    \item $P$ is enumerable.
+    \item There exists a decidable $Q \ss \N^2$ such that $P$ is a projection of $Q$.
+  \end{enumerate}  
+\end{lemma}
+
+\begin{proof}[$1 \Rightarrow 2$]
+  Define $Q$ to be the set of pairs $(n, t)$ such that the number $n$ appears in the output of the enumerating machine of $P$ within $t$ steps.
+\end{proof}
+
+\begin{proof}[$2 \Rightarrow 1$]
+  Using a Cantor enumeration, iterate over all members of $Q$, outputting their projections (onto the known coordinate).
+\end{proof}
+
+\begin{definition}
+  A set $S \ss \N^n$ is \emph{enumerable}, iff its image under a Cantor enumeration of $\N^n$ is enumerable.
+\end{definition}
+
+\begin{lemma}[on graphs]
+  Let $f \col \N \to \N$.
+  The following are equivalent:
+  \begin{enumerate}
+    \item $f$ is computable.
+    \item Its graph is enumerable.
+  \end{enumerate} 
+\end{lemma}
+
+\begin{proof}[$1 \Rightarrow 2$]
+  Since $f$ is defined everywhere, we may iterate over the naturals and output for each $x \in \N$ the pair $(x, f(x))$ (in the guise of its image under a Cantor enumeration).
+\end{proof}
+
+\begin{proof}[$2 \Rightarrow 1$]
+  To compute $f(x)$, run the Turing machine for the graph until arriving at $(x, f(x))$.
+  This will happen.
+\end{proof}
+
+\subsection{Universal functions}
+
+\begin{definition}
+  Let $D \ss \N^{m+1}$, and let $U \col D \to \N^n$ be a computable function.
+  The function $U_k \col \Proj_{1, \dots, m} D \to \N^n$, defined, for $k \in \Proj_0 d$ and $x \in \N^m$ as
+  $$ U_{k}(x) := U(k, x), $$
+  we will call a \emph{section} of $U$.
+  $U$ itself is said to be \emph{universal} for the class of functions
+  $$ C = \b{ U_k \mid k \in \Proj_0 D }. $$
+\end{definition}
+
+\begin{lemma}
+  There exists a universal function for the class $\Comp_m$.
+\end{lemma}
+
+\begin{proof}
+  Let $U_k(x)$ be the output of the TM number $k$ on $x$. 
+\end{proof}
+
+\begin{lemma}
+  There does not exist an everywhere defined universal function $U \col \N^2 \to \N$ for the class $\Comp_1^*$.
+\end{lemma}
+
+\begin{proof}
+  By diagonal argument.
+  Consider the function $n \mapsto U(n, n)+1$.
+  It is computable, but differs from any section $U_k$ at $k$:
+  $$ U_k(k) + 1 \ne U_k(k). $$
+  A contradiction.
+\end{proof}
+
+\begin{remark}
+  This proof fails for $\Comp_1$, since $U(k, k)$ may not exist.
+\end{remark}
+
+\begin{lemma}
+  There exists a computable $f \col \N \to \N$ such that there does not exist an $F \col \N \to \N$ with
+  $ F|_{\dom f} = f$.
+\end{lemma}
+
+\begin{proof}
+  Take $f \col n \mapsto U(n,n)+1$, where $U$ is an (existent) universal function for $\Comp_1$.
+  Suppose $F$ exists.
+  \begin{itemize}
+    \item If $n \in \dom f$, then $F(n) \ne U(n, n)$.
+    \item If $n \not\in \dom f$, then $n \not\in \dom U$ and $n \in \dom F$.
+  \end{itemize}
+  Therefore, $F \ne U_n$ for any $n \in \N$.
+  But $F \in \Comp_1^* \ss \Comp_1$, and $U$ is universal for $\Comp_1$.
+  A contradiction.
+\end{proof}
+
+\subsection{An enumerable non-decidable set}
+
+\begin{theorem}
+  There exists an enumerable non-decidable set.  
+\end{theorem}
+
+\begin{proof}
+  Let $f \col n \mapsto U(n,n)+1$ be as in the previous lemma.
+  $S := \dom f$ is enumerable, as it is the domain of a computable function.
+  We assert that $S$ is undecidable.
+  Suppose otherwise.
+  Put
+  $$
+  F(x) = \q{x \in S} f(x).
+  $$
+  Since the characteristic function $\q{x \in S}$ is computable, $F$ is computable and defined everywhere.
+  This contradicts the previous lemma.
+\end{proof}
+
+\subsubsection{Some remarks on this proof}
+
+\begin{itemize}
+  \item In fact, the set
+  $$ S = \b{ n \mid U(n, n) \text{ is defined}} $$
+  is a guise of the classic diagonal argument on machines that do not accept themselves.
+  \item $\ol S$ is not enumerable. If both $S$ and $\ol S$ were enumerable, they would be decidable (obvious, but we have met that on page \pageref{Post's criterion}).
+  \item The domain of this $U \col {\ss \N^2} \to \N$ is an enumerable, undecidable set itself. It is enumerable, as it is a domain of a computable function, but the diagonal function $n \mapsto U(n, n)$ serves as a counterexample to decidability.
+\end{itemize}
+
+\begin{lemma}
+  There exists a computable $f \col {\ss \N} \to 2$ that does not a have an everywhere defined computable continuation $F \col \N \to \N$ (so that $F|_{\dom f} = f$). 
+\end{lemma}
+
+\begin{proof}
+  Put
+  $$
+  f(x) = \begin{cases}
+    \q{U(x,x) = 0}, & \text{if $U(x, x)$ is defined,}\\
+    \und & \oth.
+  \end{cases}
+  $$
+  $F$ differs from any section of $U$ in the diagonal.
+\end{proof}
+
+\subsection{Unseparable enumerable sets}
+
+\begin{lemma}
+  There exist enumerable disjoint $X$ and $Y$ such that, if $Z$ is decidable and $Z \sps X$, then
+  $$ Y \cap Z \ne 0. $$ 
+\end{lemma}
+
+Thus, $X$ and $Y$ cannot be `separated' by decidable sets.
+
+\begin{proof}
+  Let $f$ be as in the previous lemma, and put $X = f^{-1}(0)$, $Y = f^{-1}(1)$.
+  Suppose there exists a decidable $Z$ such that $Z \sps X$ and $Z \cap Y = \naught$. 
+  Now let
+  $$
+  F(x)
+  = \begin{cases}
+    f(x), & x \in Z, \\
+    0 & x \not\in Z.
+  \end{cases}
+  $$
+  Since $Z$ contains all the $x$s such that $f(x)$ is nonzero, $F$ continues $f$.
+  But it is computable, in contradiction with the conclusion.
 \end{proof}
